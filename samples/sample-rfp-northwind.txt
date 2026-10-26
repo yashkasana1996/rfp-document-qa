@@ -1,0 +1,83 @@
+REQUEST FOR PROPOSAL — INTERIOR FIT-OUT WORKS
+Northwind Analytics Pvt Ltd (fictional) — New Regional Office, Tower B, Levels 7 & 8
+RFP Reference: NWA/FO/2026/014 — Issue date: 2 November 2026
+THIS IS A SYNTHETIC SAMPLE DOCUMENT CREATED FOR DEMONSTRATION. ALL NAMES, FIGURES AND TERMS ARE INVENTED.
+
+SECTION 1 — INTRODUCTION
+1.1 Northwind Analytics Pvt Ltd ("the Client") invites sealed proposals from qualified design-and-build contractors for the complete interior fit-out of approximately 48,000 sq ft of carpet area across Levels 7 and 8 of Tower B.
+1.2 The scope covers civil and interior works, mechanical, electrical and plumbing (MEP) services, HVAC, fire detection and suppression, IT/AV containment, loose furniture and signage.
+1.3 The Client's project management consultant (PMC) for this engagement is Tailspin Project Advisory (fictional). All queries must be routed through the PMC.
+
+SECTION 2 — KEY DATES
+2.1 Pre-bid site visit: 9 November 2026 at 11:00 hrs. Attendance is mandatory for at least one representative of each bidder.
+2.2 Last date for written queries: 12 November 2026, 17:00 hrs.
+2.3 Proposal submission deadline: 23 November 2026, 15:00 hrs. Late submissions will not be opened.
+2.4 Technical bid opening: 24 November 2026. Commercial bids of technically qualified bidders will be opened on 1 December 2026.
+2.5 Target date for issue of Letter of Award: 10 December 2026.
+
+SECTION 3 — ELIGIBILITY CRITERIA
+3.1 Average annual turnover of at least INR 60 crore over the last three audited financial years (FY2023-24, FY2024-25, FY2025-26).
+3.2 Completion of at least three similar interior fit-out projects of a minimum 30,000 sq ft each in the last five years, or two projects of 45,000 sq ft each. Completion certificates from clients are mandatory.
+3.3 Valid GST registration and PAN, and ISO 9001 and ISO 45001 certification.
+3.4 The bidder must not be blacklisted by any government body or listed company. A self-declaration on letterhead is required.
+3.5 Consortium bids and joint ventures are not permitted. Subcontracting of MEP packages is permitted with prior written approval of the PMC.
+
+SECTION 4 — PROJECT TIMELINE
+4.1 The total completion period is 18 weeks from the date of handover of site, including design development.
+4.2 Design development and approval of good-for-construction drawings must be completed within 4 weeks of site handover.
+4.3 Intermediate milestone: completion of all above-ceiling MEP services by the end of Week 11.
+4.4 The contractor shall submit a detailed programme (Primavera or MS Project) within 7 days of Letter of Award.
+
+SECTION 5 — COMMERCIAL TERMS
+5.1 Contract type: lump-sum, fixed price, with re-measurable provisional sums only for items marked "PS" in the BOQ.
+5.2 Prices shall be quoted exclusive of GST. GST will be paid at the applicable rate against valid tax invoices.
+5.3 Payment terms:
+    (a) Mobilisation advance of 10% of contract value against an unconditional bank guarantee of equal value, recovered pro-rata from running bills.
+    (b) Running account bills monthly, payable within 30 days of certification by the PMC, at 85% of certified value.
+    (c) 10% on virtual completion and handover.
+    (d) Balance 5% retention released on expiry of the defects liability period, or earlier against a bank guarantee of equal value.
+5.4 Price variation: none. Prices are firm until completion, including any extension of time attributable to the contractor.
+
+SECTION 6 — EARNEST MONEY DEPOSIT AND SECURITIES
+6.1 Earnest Money Deposit (EMD) of INR 25,00,000 by demand draft or bank guarantee valid for 120 days from the bid due date. Bids without EMD will be rejected.
+6.2 Performance bank guarantee of 5% of contract value, valid until 60 days beyond the defects liability period, within 14 days of Letter of Award.
+
+SECTION 7 — LIQUIDATED DAMAGES AND PENALTIES
+7.1 Delay in overall completion: liquidated damages at 0.5% of contract value per week of delay, capped at 5% of contract value.
+7.2 Failure to achieve the Week 11 MEP milestone: withholding of 2% of the next running bill, released if overall completion is achieved on time.
+7.3 If delay exceeds 6 weeks beyond the completion date, the Client may terminate for default, encash the performance guarantee and complete the works at the contractor's risk and cost.
+7.4 Safety non-compliance observed by the PMC: INR 25,000 per instance, deducted from the running bill.
+
+SECTION 8 — WARRANTY, DEFECTS AND INSURANCE
+8.1 Defects liability period: 12 months from the date of virtual completion.
+8.2 Manufacturer warranties for HVAC equipment (minimum 3 years) and waterproofing (minimum 5 years) shall be assigned to the Client.
+8.3 The contractor shall maintain a Contractor's All Risk policy for 110% of contract value, workmen's compensation, and third-party liability insurance of not less than INR 5 crore.
+
+SECTION 9 — TECHNICAL REQUIREMENTS (SUMMARY)
+9.1 Materials shall conform to the approved make list in Annexure C. Any deviation requires written approval and a cost-neutral or cost-saving proposal.
+9.2 The project targets IGBC Green Interiors Gold certification; the contractor shall maintain documentation for all credits within its scope.
+9.3 Work at height above 3 m requires permits and certified scaffolding; hot work requires a permit-to-work.
+9.4 Working hours: 08:00–20:00 on weekdays. Noisy works (core cutting, chasing) only between 20:00 and 06:00 as building rules require.
+
+SECTION 10 — SUBMISSION REQUIREMENTS
+10.1 The technical envelope shall contain:
+    (a) Covering letter and signed RFP acceptance on letterhead
+    (b) Company profile and organisation chart of the proposed site team
+    (c) Audited financial statements for three years and a CA-certified turnover statement
+    (d) Completion certificates for qualifying projects (Section 3.2)
+    (e) GST, PAN, ISO certificates and the non-blacklisting declaration
+    (f) Preliminary design concept and material board (maximum 20 pages)
+    (g) Draft programme and method statement for MEP works
+    (h) EMD instrument (Section 6.1)
+10.2 The commercial envelope shall contain only the priced BOQ in the Client's format, signed and stamped on every page, and a soft copy in Excel. Any alteration to the BOQ format or descriptions will lead to rejection.
+10.3 Proposals remain valid for 120 days from the submission deadline.
+
+SECTION 11 — EVALUATION
+11.1 Technical evaluation carries 40% weight: relevant experience (15), design concept (10), team (8), programme and methodology (7). A minimum technical score of 28 out of 40 is required to qualify.
+11.2 Commercial evaluation carries 60% weight, scored as (lowest qualified price / bidder's price) x 60.
+11.3 The Client reserves the right to negotiate with the highest-ranked bidder and to award the works in packages.
+
+SECTION 12 — GENERAL CONDITIONS
+12.1 The contract shall be governed by the laws of India, with courts at Mumbai having exclusive jurisdiction. Disputes shall first go to mediation, then arbitration by a sole arbitrator under the Arbitration and Conciliation Act, 1996, seated at Mumbai.
+12.2 Confidentiality: all drawings and information shared under this RFP are confidential and must be returned or destroyed if the bidder does not submit a proposal.
+12.3 The Client is not bound to accept the lowest or any proposal and may cancel the RFP without assigning reasons.

@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RFP Document Q&amp;A</title>
+<meta name="description" content="Ask plain-English questions of long tender and RFP documents. Retrieval runs in your browser; answers come from Claude or Gemini with section citations.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root{
+  --bg:#f5f6f8;--card:#ffffff;--ink:#16202e;--muted:#5d6676;--line:#e1e4ea;
+  --navy:#1b2f4d;--navy-2:#2a4670;--gold:#b8892b;--gold-soft:#f6ecd6;
+  --ok:#1f6f43;--warn:#9a5b00;--bad:#a12d2d;--hl:#fff1c2;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f141c;--card:#161d28;--ink:#e6e9ee;--muted:#9aa3b2;--line:#263041;
+  --navy:#8fb0dd;--navy-2:#b6cbea;--gold:#d9ad55;--gold-soft:#2b2516;--hl:#4a3e12;
+}}
+:root[data-theme="dark"]{
+  --bg:#0f141c;--card:#161d28;--ink:#e6e9ee;--muted:#9aa3b2;--line:#263041;
+  --navy:#8fb0dd;--navy-2:#b6cbea;--gold:#d9ad55;--gold-soft:#2b2516;--hl:#4a3e12;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 Inter,system-ui,sans-serif}
+header{border-bottom:3px solid var(--gold);background:var(--card)}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+.top{display:flex;align-items:center;gap:16px;padding:18px 0;flex-wrap:wrap}
+.brand{font-family:"Source Serif 4",Georgia,serif;font-size:22px;color:var(--navy);margin:0}
+.tag{color:var(--muted);font-size:13px}
+.top .spacer{flex:1}
+button,.btn{font:inherit;font-size:14px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:8px 14px;cursor:pointer}
+button.primary{background:var(--navy);border-color:var(--navy);color:#fff}
+:root[data-theme="dark"] button.primary{color:#0f141c}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) button.primary{color:#0f141c}}
+button:disabled{opacity:.5;cursor:not-allowed}
+.grid{display:grid;grid-template-columns:340px 1fr;gap:20px;padding:22px 0 40px}
+@media (max-width:900px){.grid{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.card h2{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
+.drop{border:2px dashed var(--line);border-radius:10px;padding:18px;text-align:center;color:var(--muted);cursor:pointer}
+.drop.over{border-color:var(--gold);background:var(--gold-soft)}
+.drop strong{color:var(--ink)}
+.docs{list-style:none;margin:10px 0 0;padding:0;font-size:13px}
+.docs li{display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px solid var(--line)}
+.docs li span:last-child{color:var(--muted);white-space:nowrap}
+label{display:block;font-size:13px;color:var(--muted);margin:10px 0 4px}
+input,select,textarea{width:100%;font:inherit;font-size:14px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)}
+textarea{resize:vertical;min-height:70px}
+.note{font-size:12px;color:var(--muted);margin-top:8px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.chip{font-size:13px;padding:6px 11px;border-radius:999px;background:var(--gold-soft);border:1px solid transparent;color:var(--ink)}
+.chip:hover{border-color:var(--gold)}
+.ask{display:flex;gap:10px;align-items:flex-end}
+.ask textarea{min-height:48px}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin:18px 0 0}
+.tabs button{border:none;border-bottom:2px solid transparent;border-radius:0;background:none;color:var(--muted);padding:10px 12px}
+.tabs button.on{color:var(--ink);border-bottom-color:var(--gold);font-weight:600}
+.pane{display:none;padding-top:14px}.pane.on{display:block}
+.answer{white-space:pre-wrap;font-size:15px}
+.answer .cite{font-size:11px;font-weight:600;color:var(--navy);background:var(--gold-soft);border-radius:4px;padding:1px 5px;cursor:pointer}
+.passage{border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:10px;font-size:14px}
+.passage .meta{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:6px}
+.passage mark{background:var(--hl);color:inherit;border-radius:3px;padding:0 2px}
+.passage.flash{outline:2px solid var(--gold)}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:left;padding:8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.empty{color:var(--muted);padding:30px 0;text-align:center}
+.status{font-size:13px;color:var(--muted);min-height:20px;margin-top:8px}
+.status.err{color:var(--bad)}
+footer{color:var(--muted);font-size:12px;padding:0 0 30px}
+footer a{color:var(--navy)}
+.pill{font-size:11px;padding:2px 8px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
+</style>
+</head>
+<body>
+<header><div class="wrap top">
+  <h1 class="brand">RFP Document Q&amp;A</h1>
+  <span class="tag">Ask plain-English questions of long tender documents — with section citations</span>
+  <span class="spacer"></span>
+  <button id="themeBtn" title="Toggle light / dark">Light / Dark</button>
+</div></header>
+
+<main class="wrap grid">
+  <aside>
+    <div class="card">
+      <h2>1 · Documents</h2>
+      <div class="drop" id="drop"><strong>Drop PDF, Word, Excel or text</strong><br>or click to choose — files never leave your browser
+        <input type="file" id="file" multiple accept=".pdf,.docx,.xlsx,.xls,.csv,.txt,.md" hidden></div>
+      <button id="sampleBtn" style="width:100%;margin-top:10px">Load the sample RFP (fictional)</button>
+      <ul class="docs" id="docs"></ul>
+      <div class="status" id="docStatus"></div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <h2>2 · AI answers (optional)</h2>
+      <label for="provider">Provider</label>
+      <select id="provider">
+        <option value="anthropic">Anthropic Claude</option>
+        <option value="gemini">Google Gemini</option>
+      </select>
+      <label for="model">Model</label>
+      <input id="model" value="claude-sonnet-5-5">
+      <label for="key">Your API key</label>
+      <input id="key" type="password" placeholder="sk-ant-… or AIza…" autocomplete="off">
+      <p class="note">Without a key you still get local search, the passages behind every question, and the bid snapshot. The key is kept only in this browser tab's memory and sent only to the provider you pick.</p>
+    </div>
+  </aside>
+
+  <section>
+    <div class="card">
+      <h2>3 · Ask</h2>
+      <div class="ask">
+        <textarea id="q" placeholder="e.g. What are the liquidated damages and how are they capped?"></textarea>
+        <button class="primary" id="askBtn">Ask</button>
+      </div>
+      <div class="chips" id="chips"></div>
+      <div class="status" id="askStatus"></div>
+
+      <div class="tabs">
+        <button class="on" data-tab="answer">Answer</button>
+        <button data-tab="passages">Source passages</button>
+        <button data-tab="snapshot">Bid snapshot</button>
+      </div>
+      <div class="pane on" id="pane-answer"><div class="empty" id="answer">Load a document and ask a question.</div></div>
+      <div class="pane" id="pane-passages"><div class="empty">Passages that answer your question appear here.</div></div>
+      <div class="pane" id="pane-snapshot"><div class="empty">Load a document to see dates, money and percentages pulled out automatically.</div></div>
+    </div>
+  </section>
+</main>
+
+<footer class="wrap">
+  Built by <a href="https://yashkasana1996.github.io">Yashwant Kumar Gurjar</a> ·
+  <a href="https://github.com/yashkasana1996/rfp-document-qa">Source on GitHub</a> ·
+  Retrieval: BM25 in the browser · Answers: your own Claude or Gemini key
+</footer>
+
+<script id="sample-rfp" type="text/plain">__SAMPLE_RFP__</script>
+<script>
+"use strict";
+const $ = s => document.querySelector(s);
+const state = { docs: [], chunks: [], idf: {}, avgLen: 0 };
+
+/* ---------- theme ---------- */
+$("#themeBtn").onclick = () => {
+  const r = document.documentElement;
+  const dark = r.dataset.theme ? r.dataset.theme === "dark"
+    : matchMedia("(prefers-color-scheme: dark)").matches;
+  r.dataset.theme = dark ? "light" : "dark";
+};
+
+/* ---------- reading files ---------- */
+if (window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc =
+  "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+
+async function readFile(f) {
+  const ext = f.name.split(".").pop().toLowerCase();
+  if (ext === "pdf") {
+    const pdf = await pdfjsLib.getDocument({ data: await f.arrayBuffer() }).promise;
+    const pages = [];
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const tc = await (await pdf.getPage(i)).getTextContent();
+      let line = "", out = [], lastY = null;
+      for (const it of tc.items) {
+        const y = it.transform[5];
+        if (lastY !== null && Math.abs(y - lastY) > 2) { out.push(line); line = ""; }
+        line += it.str; lastY = y;
+      }
+      out.push(line);
+      pages.push(out.join("\n"));
+    }
+    return pages.map((t, i) => ({ text: t, where: "p." + (i + 1) }));
+  }
+  if (ext === "docx") {
+    const r = await mammoth.extractRawText({ arrayBuffer: await f.arrayBuffer() });
+    return [{ text: r.value, where: "" }];
+  }
+  if (["xlsx", "xls", "csv"].includes(ext)) {
+    const wb = XLSX.read(await f.arrayBuffer(), { type: "array" });
+    return wb.SheetNames.map(n => ({
+      text: XLSX.utils.sheet_to_csv(wb.Sheets[n], { FS: " | " }).replace(/( \| )+\n/g, "\n"),
+      where: "sheet " + n
+    }));
+  }
+  return [{ text: await f.text(), where: "" }];
+}
+
+/* ---------- chunking: keep numbered clauses together ---------- */
+function chunkText(docName, parts) {
+  const out = [];
+  for (const part of parts) {
+    const paras = part.text.split(/\n\s*\n|\n(?=\s*(?:SECTION|Section|ARTICLE|Clause|\d+\.\d+\s))/);
+    let buf = "", heading = "";
+    const flush = () => {
+      if (buf.trim()) out.push({ doc: docName, where: part.where, heading, text: buf.trim() });
+      buf = "";
+    };
+    for (const p of paras) {
+      const t = p.trim(); if (!t) continue;
+      const h = t.match(/^(SECTION|Section|ARTICLE)\s+[\dIVX]+[^\n]*/);
+      if (h) { flush(); heading = h[0].replace(/\s+/g, " ").slice(0, 80); }
+      if ((buf + "\n" + t).length > 900) flush();
+      buf += (buf ? "\n" : "") + t;
+    }
+    flush();
+  }
+  return out;
+}
+
+/* ---------- BM25 ---------- */
+const STOP = new Set("a an and are as at be by for from has have in is it its of on or shall that the this to will with which what who when where how does do any all be not than per".split(" "));
+const tok = s => (s.toLowerCase().match(/[a-z0-9]+(?:\.[0-9]+)?/g) || []).filter(w => !STOP.has(w) && w.length > 1);
+const stem = w => w.replace(/(ies)$/, "y").replace(/(ing|ed|es|s)$/, "");
+const SYN = {
+  penalty: ["liquidated", "damage", "penalt", "deduct"], ld: ["liquidated", "damage"],
+  deadline: ["deadline", "date", "submission", "due"], payment: ["payment", "bill", "advance", "retention"],
+  eligible: ["eligibility", "turnover", "experience", "certificate"], warranty: ["warranty", "defect", "liability"],
+  emd: ["earnest", "deposit", "emd"], document: ["envelope", "submission", "certificate", "letter"],
+  risk: ["terminat", "liquidated", "penalt", "firm", "risk", "cap", "insurance", "guarantee"]
+};
+function terms(s) {
+  const t = tok(s).map(stem);
+  const extra = [];
+  for (const w of t) for (const [k, v] of Object.entries(SYN)) if (w.startsWith(k)) extra.push(...v.map(stem));
+  return t.concat(extra);
+}
+function buildIndex() {
+  const df = {}; let total = 0;
+  for (const c of state.chunks) {
+    c.terms = terms(c.heading + " " + c.text); total += c.terms.length;
+    c.tf = {}; for (const w of c.terms) c.tf[w] = (c.tf[w] || 0) + 1;
+    for (const w of Object.keys(c.tf)) df[w] = (df[w] || 0) + 1;
+  }
+  const N = state.chunks.length;
+  state.idf = {}; for (const [w, n] of Object.entries(df)) state.idf[w] = Math.log(1 + (N - n + .5) / (n + .5));
+  state.avgLen = total / Math.max(N, 1);
+}
+function search(q, k = 6) {
+  const qt = [...new Set(terms(q))], k1 = 1.4, b = .75;
+  return state.chunks.map((c, i) => {
+    let s = 0;
+    for (const w of qt) {
+      const f = c.tf[w] || 0; if (!f) continue;
+      s += (state.idf[w] || 0) * f * (k1 + 1) / (f + k1 * (1 - b + b * c.terms.length / state.avgLen));
+    }
+    return { i, s };
+  }).filter(x => x.s > 0).sort((a, b) => b.s - a.s).slice(0, k);
+}
+
+/* ---------- loading ---------- */
+async function addFiles(files) {
+  const st = $("#docStatus"); st.className = "status";
+  for (const f of files) {
+    try {
+      st.textContent = "Reading " + f.name + "…";
+      const parts = await readFile(f);
+      const chunks = chunkText(f.name, parts);
+      state.docs.push({ name: f.name, chunks: chunks.length, chars: parts.reduce((a, p) => a + p.text.length, 0) });
+      state.chunks.push(...chunks);
+    } catch (e) { st.className = "status err"; st.textContent = "Could not read " + f.name + ": " + e.message; return; }
+  }
+  buildIndex(); renderDocs(); renderSnapshot();
+  st.textContent = state.chunks.length + " passages indexed. Ask away.";
+}
+function renderDocs() {
+  $("#docs").innerHTML = state.docs.map(d =>
+    `<li><span>${esc(d.name)}</span><span>${d.chunks} passages · ${(d.chars / 1000).toFixed(1)}k chars</span></li>`).join("");
+}
+const drop = $("#drop");
+drop.onclick = () => $("#file").click();
+$("#file").onchange = e => addFiles([...e.target.files]);
+["dragenter", "dragover"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add("over"); }));
+["dragleave", "drop"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove("over"); }));
+drop.addEventListener("drop", e => addFiles([...e.dataTransfer.files]));
+$("#sampleBtn").onclick = () => {
+  if (state.docs.some(d => d.name.startsWith("sample-rfp"))) return;
+  const txt = $("#sample-rfp").textContent;
+  addFiles([new File([txt], "sample-rfp-northwind.txt", { type: "text/plain" })]);
+};
+
+/* ---------- quick questions ---------- */
+const QUICK = [
+  ["Key dates", "List every key date and deadline in this RFP, in date order."],
+  ["Eligibility", "What are the eligibility criteria a bidder must meet?"],
+  ["Payment terms", "Explain the payment terms, advances, retention and guarantees."],
+  ["Penalties & LDs", "What liquidated damages, penalties and termination rights apply, and how are they capped?"],
+  ["Submission checklist", "Give a checklist of every document required in the technical and commercial envelopes."],
+  ["Bid risks", "Act as a bid manager. List the top commercial and contractual risks for the contractor, each with the clause reference and a suggested mitigation."]
+];
+$("#chips").innerHTML = QUICK.map((q, i) => `<button class="chip" data-i="${i}">${q[0]}</button>`).join("");
+$("#chips").onclick = e => { const b = e.target.closest(".chip"); if (!b) return; $("#q").value = QUICK[b.dataset.i][1]; ask(); };
+
+/* ---------- provider ---------- */
+const DEFAULT_MODEL = { anthropic: "claude-sonnet-5-5", gemini: "gemini-2.5-flash" };
+$("#provider").onchange = e => { $("#model").value = DEFAULT_MODEL[e.target.value]; };
+$("#key").addEventListener("input", e => {
+  const v = e.target.value.trim();
+  if (v.startsWith("sk-ant-") && $("#provider").value !== "anthropic") { $("#provider").value = "anthropic"; $("#model").value = DEFAULT_MODEL.anthropic; }
+  if (v.startsWith("AIza") && $("#provider").value !== "gemini") { $("#provider").value = "gemini"; $("#model").value = DEFAULT_MODEL.gemini; }
+});
+
+const SYSTEM = `You are a senior bid manager reviewing a tender / RFP for a contractor.
+Answer ONLY from the numbered passages provided. Cite passages inline as [P1], [P2] after each claim and quote clause numbers where the passage gives them.
+If the passages do not contain the answer, say so plainly and say what to look for. Be concise and use short lists where helpful. Use the currency and units exactly as written.`;
+
+async function callModel(question, passages) {
+  const provider = $("#provider").value, model = $("#model").value.trim(), key = $("#key").value.trim();
+  const context = passages.map((c, n) => `[P${n + 1}] (${c.doc}${c.where ? ", " + c.where : ""}${c.heading ? " — " + c.heading : ""})\n${c.text}`).join("\n\n");
+  const user = `PASSAGES:\n${context}\n\nQUESTION: ${question}`;
+  if (provider === "anthropic") {
+    const r = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "content-type": "application/json", "x-api-key": key, "anthropic-version": "2023-06-01",
+                 "anthropic-dangerous-direct-browser-access": "true" },
+      body: JSON.stringify({ model, max_tokens: 1200, system: SYSTEM, messages: [{ role: "user", content: user }] })
+    });
+    const j = await r.json(); if (!r.ok) throw new Error(j.error?.message || r.statusText);
+    return j.content.map(b => b.text || "").join("");
+  }
+  const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, {
+    method: "POST", headers: { "content-type": "application/json", "x-goog-api-key": key },
+    body: JSON.stringify({ systemInstruction: { parts: [{ text: SYSTEM }] }, contents: [{ role: "user", parts: [{ text: user }] }] })
+  });
+  const j = await r.json(); if (!r.ok) throw new Error(j.error?.message || r.statusText);
+  return (j.candidates?.[0]?.content?.parts || []).map(p => p.text || "").join("");
+}
+
+/* ---------- ask ---------- */
+let lastHits = [];
+async function ask() {
+  const q = $("#q").value.trim(), st = $("#askStatus"); st.className = "status";
+  if (!state.chunks.length) { st.textContent = "Load a document first (or the sample RFP)."; return; }
+  if (!q) return;
+  const hits = search(q, 6); lastHits = hits.map(h => state.chunks[h.i]);
+  renderPassages(q);
+  if (!hits.length) { $("#pane-answer").innerHTML = `<div class="empty">Nothing in the documents matches that question.</div>`; showTab("answer"); return; }
+  if (!$("#key").value.trim()) {
+    $("#pane-answer").innerHTML = `<div class="answer">No API key added, so here is what local search found. The top passage:</div>` + passageHTML(lastHits[0], 0, q) +
+      `<p class="note">Add a Claude or Gemini key on the left to get a written answer that combines all ${lastHits.length} passages with citations.</p>`;
+    showTab("answer"); return;
+  }
+  $("#askBtn").disabled = true; st.textContent = "Reading the " + lastHits.length + " most relevant passages…";
+  try {
+    const text = await callModel(q, lastHits);
+    $("#pane-answer").innerHTML = `<div class="answer">${esc(text).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+      .replace(/\[P(\d+)\]/g, (m, n) => `<span class="cite" data-p="${n - 1}">P${n}</span>`)}</div>`;
+    st.textContent = "Answered from " + lastHits.length + " passages. Click a citation to see its source.";
+    showTab("answer");
+  } catch (e) { st.className = "status err"; st.textContent = "The AI call failed: " + e.message; }
+  finally { $("#askBtn").disabled = false; }
+}
+$("#askBtn").onclick = ask;
+$("#q").addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); ask(); } });
+$("#pane-answer").onclick = e => {
+  const c = e.target.closest(".cite"); if (!c) return;
+  showTab("passages");
+  const el = document.getElementById("pass-" + c.dataset.p);
+  if (el) { el.scrollIntoView({ behavior: "smooth", block: "center" }); el.classList.add("flash"); setTimeout(() => el.classList.remove("flash"), 1500); }
+};
+
+function passageHTML(c, n, q) {
+  const ws = [...new Set(tok(q).filter(w => w.length > 3))];
+  let t = esc(c.text);
+  if (ws.length) t = t.replace(new RegExp("\\b(" + ws.map(w => w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|") + ")", "gi"), "<mark>$1</mark>");
+  return `<div class="passage" id="pass-${n}"><div class="meta"><span><strong>P${n + 1}</strong> · ${esc(c.heading || "—")}</span><span>${esc(c.doc)}${c.where ? " · " + esc(c.where) : ""}</span></div>${t.replace(/\n/g, "<br>")}</div>`;
+}
+function renderPassages(q) { $("#pane-passages").innerHTML = lastHits.length ? lastHits.map((c, n) => passageHTML(c, n, q)).join("") : `<div class="empty">No matching passages.</div>`; }
+
+/* ---------- bid snapshot (no AI needed) ---------- */
+function renderSnapshot() {
+  const rows = [];
+  const DATE = /\b(\d{1,2}\s+(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{4}|\d{1,2}[\/.-]\d{1,2}[\/.-]\d{2,4})\b/g;
+  const MONEY = /\b(?:INR|Rs\.?|₹)\s?[\d,]+(?:\.\d+)?(?:\s?(?:crore|lakh|cr|L))?/gi;
+  const PCT = /\b\d+(?:\.\d+)?\s?%/g;
+  const PERIOD = /\b\d+\s+(?:days|weeks|months|years)\b/gi;
+  for (const c of state.chunks) for (const line of c.text.split(/\n/)) {
+    const ref = (line.match(/^\s*(\d+\.\d+|\([a-z]\))/) || [])[1] || "";
+    const kinds = [["Date", DATE], ["Amount", MONEY], ["Percentage", PCT], ["Period", PERIOD]];
+    for (const [kind, re] of kinds) {
+      const m = line.match(re); if (!m) continue;
+      rows.push({ kind, value: [...new Set(m)].join(", "), ref, line: line.trim().replace(/^\d+\.\d+\s*/, ""), heading: c.heading });
+      break;
+    }
+  }
+  if (!rows.length) { $("#pane-snapshot").innerHTML = `<div class="empty">No dates, amounts or percentages found.</div>`; return; }
+  const order = { Date: 0, Amount: 1, Percentage: 2, Period: 3 };
+  rows.sort((a, b) => order[a.kind] - order[b.kind]);
+  $("#pane-snapshot").innerHTML = `<p class="note" style="margin-top:0">Pulled out locally with pattern matching — no AI involved. ${rows.length} lines with a date, amount, percentage or period.</p>
+  <div style="overflow-x:auto"><table><thead><tr><th>Type</th><th>Value</th><th>Clause</th><th>Context</th></tr></thead><tbody>${rows.map(r =>
+    `<tr><td><span class="pill">${r.kind}</span></td><td><strong>${esc(r.value)}</strong></td><td>${esc(r.ref)}</td><td>${esc(r.line.slice(0, 180))}</td></tr>`).join("")}</tbody></table></div>`;
+}
+
+/* ---------- tabs & utils ---------- */
+function showTab(name) {
+  document.querySelectorAll(".tabs button").forEach(b => b.classList.toggle("on", b.dataset.tab === name));
+  document.querySelectorAll(".pane").forEach(p => p.classList.toggle("on", p.id === "pane-" + name));
+}
+document.querySelector(".tabs").onclick = e => { const b = e.target.closest("button"); if (b) showTab(b.dataset.tab); };
+function esc(s) { return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
+</script>
+</body>
+</html>
